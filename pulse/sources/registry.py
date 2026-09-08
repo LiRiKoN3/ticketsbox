@@ -4,10 +4,12 @@
 Автопошуку файлів тут навмисно немає — список видно очима.
 """
 
+from pulse.sources.rss import RssAdapter
 from pulse.sources.telegram import TelegramAdapter
 
 ADAPTERS: list = [
     TelegramAdapter(),
+    RssAdapter(),
 ]
 
 
