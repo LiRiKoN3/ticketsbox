@@ -1,6 +1,6 @@
 """Готовий до аналізу зріз. Це контракт, а не дамп таблиці."""
 
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 
 from pulse.analytics import above_median, medians_by_source, ratio_to_median
 from pulse.db import all_posts, count_rejected
@@ -58,6 +58,7 @@ def build_report(session, days: int, until) -> dict:
         "slice": {
             "from": since.isoformat(),
             "to": until.isoformat(),
+            "generated_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
             "posts_total": len(posts),
             "rejected_on_import": count_rejected(session),
         },
