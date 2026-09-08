@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"><channel>
+  <title>AffNews</title>
+  <link>https://affnews.example</link>
+  <description>Новини та аналітика ніші</description>
+  <language>uk</language>
+  <lastBuildDate>Fri, 15 Aug 2026 07:00:00 +0300</lastBuildDate>
+    <item>
+      <title>Ринок трафіку в липні: три зміни, які вплинуть на закупівлю</title>
+      <link>https://affnews.example/post/affnews-3000</link>
+      <guid isPermaLink="false">affnews-3000</guid>
+      <pubDate>Wed, 01 Jul 2026 12:00:00 +0300</pubDate>
+      <description>Коротко про те, що сталося з аукціоном за останній місяць і чому ставки поповзли вгору.</description>
+      <category>arbitrage</category>
+    </item>
+    <item>
+      <title>Огляд антидетект-браузерів 2026</title>
+      <link>https://affnews.example/post/affnews-3001</link>
+      <guid isPermaLink="false">affnews-3001</guid>
+      <pubDate>Fri, 03 Jul 2026 16:00:00 +0300</pubDate>
+      <description>Порівняли шість рішень за стабільністю профілів та ціною.</description>
+      <category>arbitrage</category>
+    </item>
+    <item>
+      <title>Як не втратити домен на модерації</title>
+      <link>https://affnews.example/post/affnews-3002</link>
+      <guid isPermaLink="false">affnews-3002</guid>
+      <pubDate>Sun, 05 Jul 2026 16:00:00 +0300</pubDate>
+      <description><![CDATA[<p>Чек-лист із семи пунктів перед запуском нової кампанії.</p><p>Читати далі на <a href="https://affnews.example">сайті</a>.</p>]]></description>
+      <category>arbitrage</category>
+    </item>
+    <item>
+      <title>Партнерські мережі: хто платить вчасно</title>
+      <link>https://affnews.example/post/affnews-3003</link>
+      <guid isPermaLink="false">affnews-3003</guid>
+      <pubDate>Tue, 07 Jul 2026 14:00:00 +0300</pubDate>
+      <description>Зібрали статистику виплат за друге півріччя.</description>
+      <category>arbitrage</category>
+    </item>
+    <item>
+      <title>Мобільний трафік дорожчає — що робити далі</title>
+      <link>https://affnews.example/post/affnews-3004</link>
+      <guid isPermaLink="false">affnews-3004</guid>
+      <pubDate>Thu, 09 Jul 2026 17:00:00 +0300</pubDate>
+      <description>Аналіз причин та три робочі стратегії.</description>
+      <category>arbitrage</category>
+    </item>
+    <item>
+      <title>Атрибуція без cookie: що вже працює</title>
+      <link>https://affnews.example/post/affnews-3005</link>
+      <guid isPermaLink="false">affnews-3005</guid>
+      <pubDate>Sat, 11 Jul 2026 13:00:00 +0300</pubDate>
+      <description>Розбір server-side підходів на живих кейсах.</description>
+      <category>arbitrage</category>
+    </item>
+    <item>
+      <title>Креативи, згенеровані моделлю: чи проходять модерацію</title>
+      <link>https://affnews.example/post/affnews-3006</link>
+      <guid isPermaLink="false">affnews-3006</guid>
+      <pubDate>Mon, 13 Jul 2026 17:00:00 +0300</pubDate>
+      <description><![CDATA[<p>Провели експеримент на 400 оголошеннях.</p><p>Читати далі на <a href="https://affnews.example">сайті</a>.</p>]]></description>
+      <category>arbitrage</category>
+    </item>
+    <item>
+      <title>Звіт про стан ніші за півріччя</title>
+      <link>https://affnews.example/post/affnews-3007</link>
+      <guid isPermaLink="false">affnews-3007</guid>
+      <pubDate>Wed, 15 Jul 2026 18:00:00 +0300</pubDate>
+      <description>Обсяги, середні ставки, найактивніші вертикалі.</description>
+      <category>arbitrage</category>
+    </item>
+    <item>
+      <title>Ринок трафіку в липні: три зміни, які вплинуть на закупівлю</title>
+      <link>https://affnews.example/post/affnews-3008</link>
+      <guid isPermaLink="false">affnews-3008</guid>
+      <pubDate>Fri, 17 Jul 2026 12:00:00 +0300</pubDate>
+      <description>Коротко про те, що сталося з аукціоном за останній місяць і чому ставки поповзли вгору.</description>
+      <category>arbitrage</category>
+    </item>
+</channel></rss>

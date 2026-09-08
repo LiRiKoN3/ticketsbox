@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"><channel>
+  <title>AdTech Digest</title>
+  <link>https://adtech.example</link>
+  <description>Новини та аналітика ніші</description>
+  <language>uk</language>
+  <lastBuildDate>Fri, 15 Aug 2026 07:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Ринок трафіку в липні: три зміни, які вплинуть на закупівлю</title>
+      <link>https://adtech.example/post/adtech-digest-3000</link>
+      <guid isPermaLink="false">adtech-digest-3000</guid>
+      <pubDate>Thu, 02 Jul 2026 18:00:00 +0000</pubDate>
+      <description>Коротко про те, що сталося з аукціоном за останній місяць і чому ставки поповзли вгору.</description>
+      <category>arbitrage</category>
+    </item>
+    <item>
+      <title>Огляд антидетект-браузерів 2026</title>
+      <link>https://adtech.example/post/adtech-digest-3001</link>
+      <guid isPermaLink="false">adtech-digest-3001</guid>
+      <pubDate>Sat, 04 Jul 2026 18:00:00 +0000</pubDate>
+      <description>Порівняли шість рішень за стабільністю профілів та ціною.</description>
+      <category>arbitrage</category>
+    </item>
+    <item>
+      <title>Як не втратити домен на модерації</title>
+      <link>https://adtech.example/post/adtech-digest-3002</link>
+      <guid isPermaLink="false">adtech-digest-3002</guid>
+      <pubDate>Mon, 06 Jul 2026 13:00:00 +0000</pubDate>
+      <description><![CDATA[<p>Чек-лист із семи пунктів перед запуском нової кампанії.</p><p>Читати далі на <a href="https://adtech.example">сайті</a>.</p>]]></description>
+      <category>arbitrage</category>
+    </item>
+    <item>
+      <title>Партнерські мережі: хто платить вчасно</title>
+      <link>https://adtech.example/post/adtech-digest-3003</link>
+      <guid isPermaLink="false">adtech-digest-3003</guid>
+      <pubDate>Wed, 08 Jul 2026 10:00:00 +0000</pubDate>
+      <description>Зібрали статистику виплат за друге півріччя.</description>
+      <category>arbitrage</category>
+    </item>
+    <item>
+      <title>Мобільний трафік дорожчає — що робити далі</title>
+      <link>https://adtech.example/post/adtech-digest-3004</link>
+      <guid isPermaLink="false">adtech-digest-3004</guid>
+      <pubDate>Fri, 10 Jul 2026 10:00:00 +0000</pubDate>
+      <description>Аналіз причин та три робочі стратегії.</description>
+      <category>arbitrage</category>
+    </item>
+    <item>
+      <title>Атрибуція без cookie: що вже працює</title>
+      <link>https://adtech.example/post/adtech-digest-3005</link>
+      <guid isPermaLink="false">adtech-digest-3005</guid>
+      <pubDate>Sun, 12 Jul 2026 15:00:00 +0000</pubDate>
+      <description>Розбір server-side підходів на живих кейсах.</description>
+      <category>arbitrage</category>
+    </item>
+    <item>
+      <title>Креативи, згенеровані моделлю: чи проходять модерацію</title>
+      <link>https://adtech.example/post/adtech-digest-3006</link>
+      <guid isPermaLink="false">adtech-digest-3006</guid>
+      <pubDate>Tue, 14 Jul 2026 19:00:00 +0000</pubDate>
+      <description><![CDATA[<p>Провели експеримент на 400 оголошеннях.</p><p>Читати далі на <a href="https://adtech.example">сайті</a>.</p>]]></description>
+      <category>arbitrage</category>
+    </item>
+</channel></rss>
