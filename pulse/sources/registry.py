@@ -4,12 +4,14 @@
 Автопошуку файлів тут навмисно немає — список видно очима.
 """
 
+from pulse.sources.crm_csv import CrmCsvAdapter
 from pulse.sources.rss import RssAdapter
 from pulse.sources.telegram import TelegramAdapter
 
 ADAPTERS: list = [
     TelegramAdapter(),
     RssAdapter(),
+    CrmCsvAdapter(),
 ]
 
 
