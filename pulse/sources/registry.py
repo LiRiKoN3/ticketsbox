@@ -4,8 +4,10 @@
 Автопошуку файлів тут навмисно немає — список видно очима.
 """
 
+from pulse.sources.telegram import TelegramAdapter
+
 ADAPTERS: list = [
-    # заповнюється в Task 4-6
+    TelegramAdapter(),
 ]
 
 
