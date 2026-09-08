@@ -12,7 +12,7 @@ from pulse.sources.base import ParseResult, Rejected
 KYIV = ZoneInfo("Europe/Kyiv")
 COLUMNS = 7                       # post_id;Дата;Площадка;Текст;reach;Ссылка;Автор
 DATE_FORMATS = ("%d.%m.%Y %H:%M", "%Y-%m-%d %H:%M")
-SPACES = re.compile(r"[\s ]")
+SPACES = re.compile(r"\s")   # \s у Python ловить і нерозривний пробіл
 
 
 def parse_number(raw: str) -> int | None:
