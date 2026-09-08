@@ -195,7 +195,7 @@ RSS у коді немає. Так само `NULL` отримують `trafficde
 
 **Групування — за джерелом**, дослівно за умовою. Свідоме рішення: за каналом було б
 справедливіше (медіани telegram: trafficdesk 10 500, cpa_insider 15 500; CRM: cpa insider
-1 622, trafficdesk 4 208, внутренний канал 6 671 — розкид вчетверо), але умова каже
+1 622, trafficdesk 4 208.5, внутренний канал 6 671.5 — розкид вчетверо), але умова каже
 «свого джерела». Групування змінюється в одному місці. Записати в README.
 
 Кількість постів, з яких порахована медіана, виводиться у звіт — щоб споживач сам бачив
@@ -222,7 +222,7 @@ RSS у коді немає. Так само `NULL` отримують `trafficde
     { "source": "rss", "metric": null, "metric_precision": null,
       "posts": 16, "with_metric": 0, "median": null },
     { "source": "crm_csv", "metric": "reach", "metric_precision": "exact",
-      "posts": 18, "with_metric": 16, "median": 4543 }
+      "posts": 18, "with_metric": 16, "median": 4543.5 }
   ],
   "posts": [
     { "source": "telegram", "channel": "trafficdesk", "id": "trafficdesk/1843",

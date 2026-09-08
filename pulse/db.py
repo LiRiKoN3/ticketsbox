@@ -71,7 +71,10 @@ class RejectedRow(Base):
 def open_session(db_path: str):
     engine = create_engine(f"sqlite:///{db_path}")
     Base.metadata.create_all(engine)
-    with Session(engine) as session:
+    # expire_on_commit=False: після коміту прочитані пости лишаються придатними
+    # до використання. Інакше будь-яке звертання до них поза блоком with
+    # падає з DetachedInstanceError.
+    with Session(engine, expire_on_commit=False) as session:
         yield session
         session.commit()
 
