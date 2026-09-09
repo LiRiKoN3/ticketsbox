@@ -1,10 +1,47 @@
 """Договір, який виконує кожен адаптер джерела."""
 
 from dataclasses import dataclass, field
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Protocol
 
 from pulse.model import CanonicalPost
+
+
+UNKNOWN_ZONE = "unknown"
+
+
+def format_offset(value: datetime) -> str:
+    """Зона оригіналу у вигляді, який видно очима: UTC, +03:00 або unknown.
+
+    Naive значення означає, що зони в даних не було. Тоді підписувати результат
+    як "UTC" — брехня: ані вихідна зона не UTC, ані перерахунку не відбулось.
+    """
+    offset = value.utcoffset()
+    if offset is None:
+        return UNKNOWN_ZONE
+    if offset == timedelta(0):
+        return "UTC"
+    total_minutes = int(offset.total_seconds() // 60)
+    sign = "+" if total_minutes >= 0 else "-"
+    total_minutes = abs(total_minutes)
+    return f"{sign}{total_minutes // 60:02d}:{total_minutes % 60:02d}"
+
+
+# line_number=0 означає "файл цілком", а не якийсь його рядок: так позначається
+# випадок, коли файл не вдалося навіть відкрити чи розібрати.
+WHOLE_FILE = 0
+
+
+class Unreadable(Exception):
+    """Значення прочитати не вдалося. Рядок піде в rejected_rows із цією причиною."""
+
+
+def reason_of(error: Exception) -> str:
+    """Причина відмови у вигляді, придатному для очей людини."""
+    if isinstance(error, Unreadable):
+        return str(error)
+    return f"{type(error).__name__}: {error}"
 
 
 @dataclass

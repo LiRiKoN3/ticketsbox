@@ -2,7 +2,8 @@ from datetime import datetime, timezone
 
 import pytest
 
-from pulse.db import all_posts, count_rejected, open_session, save_posts, save_rejected
+from pulse.db import (all_posts, count_rejected, forget_rejected, open_session,
+                      save_posts, save_rejected)
 from pulse.model import CanonicalPost
 
 
@@ -83,4 +84,36 @@ class FakeRejected:
 def test_rejected_rows_are_idempotent(session):
     save_rejected(session, [FakeRejected()])
     save_rejected(session, [FakeRejected()])
+    assert count_rejected(session) == 1
+
+
+def test_the_same_file_named_two_ways_is_one_file(session, tmp_path):
+    """Шлях набирають по-різному, а файл той самий — рядок має бути один."""
+    row = FakeRejected()
+    row.source_file = str(tmp_path / "export.csv")
+    save_rejected(session, [row])
+
+    same = FakeRejected()
+    same.source_file = str(tmp_path / "sub" / ".." / "export.csv")
+    save_rejected(session, [same])
+
+    assert count_rejected(session) == 1
+
+
+def test_fixing_the_source_clears_its_old_rejected_rows(session):
+    """Лічильник каже, наскільки зріз неповний. Виправили джерело —
+    число має впасти, а не лишитися назавжди."""
+    save_rejected(session, [FakeRejected()])
+    forget_rejected(session, "fixtures/export.csv")
+    save_rejected(session, [])
+    assert count_rejected(session) == 0
+
+
+def test_forgetting_one_file_does_not_touch_another(session):
+    first = FakeRejected()
+    second = FakeRejected()
+    second.source_file = "fixtures/other.csv"
+    save_rejected(session, [first, second])
+
+    forget_rejected(session, "fixtures/export.csv")
     assert count_rejected(session) == 1

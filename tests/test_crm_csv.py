@@ -20,6 +20,23 @@ def test_parse_number_strips_spaces_including_nbsp():
     assert parse_number("769") == 769
 
 
+def test_parse_number_reads_a_thousands_separator():
+    # "1,234" — це наявні дані. Видавати їх за None означає збрехати легендою,
+    # бо null у контракті значить "даних немає".
+    assert parse_number("1,234") == 1234
+    assert parse_number("12,345,678") == 12345678
+
+
+def test_parse_number_refuses_what_it_cannot_read():
+    assert parse_number("²") is None      # isdigit() вважав це числом, а int() падав
+    assert parse_number("12K") is None
+    assert parse_number("1,5") is None      # не тисячі; краще None, ніж вигадане число
+
+
+def test_parse_number_keeps_the_sign():
+    assert parse_number("-42") == -42
+
+
 def test_parse_number_treats_missing_as_none_not_zero():
     assert parse_number("") is None
     assert parse_number("n/a") is None
