@@ -5,7 +5,6 @@ SQLite без дублікатів і віддає самоописовий зр
 подати його моделі.
 
 Умова тестового — у [`docs/task.md`](docs/task.md).
-Дизайн із обґрунтуваннями — у [`docs/superpowers/specs/`](docs/superpowers/specs/).
 
 ---
 
