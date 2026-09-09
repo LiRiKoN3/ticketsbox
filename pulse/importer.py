@@ -32,6 +32,9 @@ def files_under(root: Path) -> list[Path]:
 
 def import_path(root: Path, session) -> ImportSummary:
     summary = ImportSummary()
+    # Ключі рахуємо за весь прогін, а не пофайлово: два різні файли можуть
+    # дати той самий (source, external_id), і пофайлова сума цього не помітить.
+    seen: set[tuple[str, str]] = set()
 
     for path in files_under(root):
         adapter = adapter_for(path)
@@ -42,7 +45,7 @@ def import_path(root: Path, session) -> ImportSummary:
         # відкочує все прочитане до нього — саме так і губився цілий імпорт.
         try:
             result = adapter.parse(path)
-            stored = save_posts(session, result.posts)
+            save_posts(session, result.posts)
             # Файл читається наново — старі відомості про його брак застаріли.
             forget_rejected(session, path)
             save_rejected(session, result.rejected)
@@ -55,7 +58,8 @@ def import_path(root: Path, session) -> ImportSummary:
             continue
 
         summary.imported += len(result.posts)
-        summary.stored += stored
+        seen.update((p.source, p.external_id) for p in result.posts)
+        summary.stored = len(seen)
         summary.rejected += len(result.rejected)
         summary.by_source[adapter.name] = (
             summary.by_source.get(adapter.name, 0) + len(result.posts)

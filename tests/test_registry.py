@@ -42,3 +42,13 @@ def test_adapter_by_name_finds_registered_adapter(monkeypatch):
 
 def test_registry_is_an_explicit_list():
     assert isinstance(ADAPTERS, list)
+
+
+def test_uppercase_extensions_are_recognised():
+    """Windows не розрізняє регістр у назвах, деякі CRM віддають EXPORT.CSV.
+
+    Формат підтримуваний — файл просто не впізнавався і зникав без сигналу.
+    """
+    assert adapter_for(Path("data/EXPORT.CSV")).name == "crm_csv"
+    assert adapter_for(Path("data/CHAN.HTML")).name == "telegram"
+    assert adapter_for(Path("data/FEED.XML")).name == "rss"

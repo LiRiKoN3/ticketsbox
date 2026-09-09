@@ -23,11 +23,15 @@ def feed_key(channel_node) -> str:
 
     RSS вимагає унікальності guid лише всередині однієї стрічки, тож дослівний
     guid ключем бути не може: дві стрічки з <guid>1</guid> затерли б одна одну.
-    Беремо хост із <channel><link> — він стабільніший за назву стрічки.
+    Беремо з <channel><link> хост РАЗОМ зі шляхом: одного хоста не досить,
+    бо сайт часто тримає кілька стрічок (`/blog/` і `/news/`), і в них
+    нумерація починається однаково.
     """
-    link = _text_of(channel_node, "link")
-    host = urlparse(link).netloc if link else ""
-    return host or _text_of(channel_node, "title")
+    if link := _text_of(channel_node, "link"):
+        parsed = urlparse(link)
+        if key := (parsed.netloc + parsed.path).strip("/"):
+            return key
+    return _text_of(channel_node, "title")
 
 
 def _text_of(node, tag: str) -> str:
@@ -41,7 +45,7 @@ class RssAdapter:
     metric_precision = None
 
     def can_handle(self, path: Path) -> bool:
-        return path.suffix == ".xml"
+        return path.suffix.lower() == ".xml"
 
     def parse(self, path: Path) -> ParseResult:
         result = ParseResult()

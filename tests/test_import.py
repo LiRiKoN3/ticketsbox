@@ -71,19 +71,39 @@ FEED = """<?xml version="1.0" encoding="UTF-8"?>
 def test_two_feeds_with_the_same_guid_do_not_overwrite_each_other(tmp_path):
     """RSS вимагає унікальності guid лише в межах стрічки.
 
-    Дослівний guid як ключ означав, що пост однієї стрічки мовчки затирав
-    пост іншої: у rejected_rows нічого, у CLI рапорт про успіх.
+    Раніше тут стояли два РІЗНІ хости — і тест давав хибну впевненість:
+    справжній випадок це один сайт із двома стрічками (новини й блог),
+    де хоста для розрізнення не вистачає.
     """
     data = tmp_path / "data"
     data.mkdir()
     (data / "a.xml").write_text(
-        FEED.format(title="Feed A", link="https://a.example"), encoding="utf-8"
+        FEED.format(title="Feed A", link="https://example.com/blog/"), encoding="utf-8"
     )
     (data / "b.xml").write_text(
-        FEED.format(title="Feed B", link="https://b.example"), encoding="utf-8"
+        FEED.format(title="Feed B", link="https://example.com/news/"), encoding="utf-8"
     )
 
     with open_session(str(tmp_path / "t.db")) as session:
         import_path(data, session)
         channels = sorted(p.channel for p in all_posts(session))
         assert channels == ["Feed A", "Feed B"]
+
+
+def test_stored_counter_notices_a_collision_between_files(tmp_path):
+    """Лічильник має показувати втрату, а не суму пофайлових результатів.
+
+    README обіцяє: розбіжність прочитаного і збереженого означає, що кілька
+    рядків зійшлися в один ключ. Пофайлова сума цього не ловить.
+    """
+    data = tmp_path / "data"
+    data.mkdir()
+    same = FEED.format(title="Той самий ключ", link="https://example.com")
+    (data / "a.xml").write_text(same, encoding="utf-8")
+    (data / "b.xml").write_text(same, encoding="utf-8")
+
+    with open_session(str(tmp_path / "t.db")) as session:
+        summary = import_path(data, session)
+        assert summary.imported == 2
+        assert summary.stored == 1
+        assert len(all_posts(session)) == 1

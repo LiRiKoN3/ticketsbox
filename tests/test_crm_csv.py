@@ -4,6 +4,7 @@ from pathlib import Path
 from pulse.sources.crm_csv import CrmCsvAdapter, parse_kyiv_datetime, parse_number
 
 FIXTURE = Path("fixtures/export.csv")
+NEWLINE = chr(10)
 
 
 def parsed():
@@ -93,3 +94,30 @@ def test_duplicate_id_appears_twice_in_parse_output():
 
 def test_forward_is_unknown_for_crm():
     assert by_id(parsed().posts, "CRM-04101")[0].is_forward is None
+
+
+def test_file_without_a_header_keeps_its_first_row(tmp_path):
+    """Перший рядок пропускався беззастережно, як заголовок.
+
+    Вивантаження без рядка заголовка втрачало справжній запис: його не було
+    ні в posts, ні в rejected_rows, ні в лічильниках.
+    """
+    path = tmp_path / "noheader.csv"
+    path.write_text(NEWLINE.join([
+        "CRM-99001;02.07.2026 12:40;TestChan;перший;100;;author",
+        "CRM-99002;03.07.2026 12:40;TestChan;другий;200;;author",
+    ]), encoding="utf-8")
+
+    result = CrmCsvAdapter().parse(path)
+    assert [p.external_id for p in result.posts] == ["CRM-99001", "CRM-99002"]
+
+
+def test_real_header_is_still_skipped(tmp_path):
+    path = tmp_path / "withheader.csv"
+    path.write_text(NEWLINE.join([
+        "post_id;Дата;Площадка;Текст;reach;Ссылка;Автор",
+        "CRM-99001;02.07.2026 12:40;TestChan;перший;100;;author",
+    ]), encoding="utf-8")
+
+    result = CrmCsvAdapter().parse(path)
+    assert [p.external_id for p in result.posts] == ["CRM-99001"]
