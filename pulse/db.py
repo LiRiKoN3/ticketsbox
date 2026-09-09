@@ -2,9 +2,10 @@
 
 from contextlib import contextmanager
 from datetime import datetime, timezone
+from pathlib import Path
 
 from sqlalchemy import (Boolean, DateTime, Integer, String, Text, TypeDecorator,
-                        UniqueConstraint, create_engine, func, select)
+                        UniqueConstraint, create_engine, delete, func, select)
 from sqlalchemy.dialects.sqlite import insert as sqlite_insert
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column
 
@@ -70,13 +71,18 @@ class RejectedRow(Base):
 @contextmanager
 def open_session(db_path: str):
     engine = create_engine(f"sqlite:///{db_path}")
-    Base.metadata.create_all(engine)
-    # expire_on_commit=False: після коміту прочитані пости лишаються придатними
-    # до використання. Інакше будь-яке звертання до них поза блоком with
-    # падає з DetachedInstanceError.
-    with Session(engine, expire_on_commit=False) as session:
-        yield session
-        session.commit()
+    try:
+        Base.metadata.create_all(engine)
+        # expire_on_commit=False: після коміту прочитані пости лишаються придатними
+        # до використання. Інакше будь-яке звертання до них поза блоком with
+        # падає з DetachedInstanceError.
+        with Session(engine, expire_on_commit=False) as session:
+            yield session
+            session.commit()
+    finally:
+        # Без dispose() пул тримає з'єднання відкритим: на Windows файл бази
+        # лишається заблокованим, а інтерпретатор сипле ResourceWarning.
+        engine.dispose()
 
 
 def save_posts(session: Session, posts: list[CanonicalPost]) -> int:
@@ -123,13 +129,33 @@ def save_posts(session: Session, posts: list[CanonicalPost]) -> int:
     return len(rows)
 
 
+def normalized_path(value) -> str:
+    """Один файл — один ключ, як би не набрали шлях у командному рядку.
+    Без цього "fixtures/" і "C:/.../fixtures" дають два рядки про той самий рядок."""
+    return str(Path(value).resolve())
+
+
+def forget_rejected(session: Session, source_file) -> int:
+    """Забути все, що знали про відкинуті рядки цього файлу.
+
+    Викликається перед повторним читанням файлу: інакше число відкинутих
+    лише росте й лишається завищеним навіть після того, як джерело виправили.
+    """
+    result = session.execute(
+        delete(RejectedRow).where(
+            RejectedRow.source_file == normalized_path(source_file)
+        )
+    )
+    return result.rowcount or 0
+
+
 def save_rejected(session: Session, rejected) -> int:
     if not rejected:
         return 0
 
     rows = [
         {
-            "source_file": r.source_file,
+            "source_file": normalized_path(r.source_file),
             "line_number": r.line_number,
             "reason": r.reason,
             "raw": r.raw,

@@ -21,10 +21,15 @@ def medians_by_source(posts) -> dict[str, float | None]:
 
 
 def ratio_to_median(value: int | None, median_value: float | None) -> float | None:
-    """None означає "порахувати неможливо", а не "нуль"."""
+    """None означає "порахувати неможливо", а не "нуль".
+
+    Повертається точне відношення. Округлення — справа того, хто складає
+    контракт: якщо округлити тут, прапорець above_median почне рахуватися
+    з округленого числа і в околі медіани відповідатиме неправильно.
+    """
     if value is None or not median_value:
         return None
-    return round(value / median_value, 3)
+    return value / median_value
 
 
 def above_median(ratio: float | None) -> bool | None:

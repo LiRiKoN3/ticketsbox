@@ -77,8 +77,40 @@ def test_legend_is_present(session):
 
 
 def test_empty_slice_is_still_a_valid_report(session):
+    """Раніше цей тест фіксував sources == [] як правильну поведінку.
+
+    README обіцяє протилежне: структура лишається цілою — нулі в лічильниках
+    і null у медіанах. Порожній список джерел не дає моделі відрізнити
+    "за цей період нуль постів" від "такого джерела в нас немає".
+    """
     report = build_report(session, days=1, until=datetime(2020, 1, 1, tzinfo=timezone.utc))
     assert report["slice"]["posts_total"] == 0
     assert report["posts"] == []
-    assert report["sources"] == []
+    assert [s["source"] for s in report["sources"]] == ["crm_csv", "rss", "telegram"]
+    for block in report["sources"]:
+        assert block["posts"] == 0
+        assert block["with_metric"] == 0
+        assert block["median"] is None
     assert "legend" in report
+
+
+def test_source_without_posts_in_the_period_keeps_its_block(session):
+    report = build_report(session, days=3, until=UNTIL)
+    telegram = source_block(report, "telegram")
+    assert telegram["posts"] == 0
+    assert telegram["median"] is None
+    assert telegram["metric"] == "views"      # вид метрики оголошує адаптер
+
+
+def test_source_gone_from_the_registry_does_not_break_the_report(session, monkeypatch):
+    """Джерело перейменували в реєстрі, а накопичені дані лишились."""
+    from pulse.sources.registry import ADAPTERS
+
+    monkeypatch.setattr(
+        "pulse.sources.registry.ADAPTERS",
+        [a for a in ADAPTERS if a.name != "telegram"],
+    )
+    report = build_report(session, days=30, until=UNTIL)
+    telegram = source_block(report, "telegram")
+    assert telegram["posts"] == 25
+    assert telegram["metric"] is None         # реєстр більше не знає, що це за число

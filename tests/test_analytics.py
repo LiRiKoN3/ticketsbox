@@ -44,3 +44,15 @@ def test_ratio_and_flag():
     assert above_median(1.5) is True
     assert above_median(1.0) is False
     assert above_median(None) is None
+
+
+def test_flag_is_not_decided_by_the_rounded_ratio():
+    """Округлення до трьох знаків з'їдало прапорець в околі медіани.
+
+    Це єдина аналітична величина всього завдання, тож помилка тут коштує
+    найдорожче: два пости по різні боки медіани діставали однакову відповідь.
+    """
+    assert above_median(ratio_to_median(4544, 4543.5)) is True
+    assert above_median(ratio_to_median(4543, 4543.5)) is False
+    assert above_median(ratio_to_median(14101, 14100)) is True
+    assert above_median(ratio_to_median(14100, 14100)) is False

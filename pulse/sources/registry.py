@@ -22,8 +22,16 @@ def adapter_for(path):
     return None
 
 
+def all_adapters() -> list:
+    """Усі оголошені джерела. Звіт показує їх усі, навіть якщо за період
+    у якогось нуль постів: інакше нуль не відрізнити від "джерела не існує"."""
+    return list(ADAPTERS)
+
+
 def adapter_by_name(name: str):
+    """None, якщо джерела в реєстрі немає: дані могли накопичитись до того,
+    як джерело перейменували, і звіт по них має лишитися можливим."""
     for adapter in ADAPTERS:
         if adapter.name == name:
             return adapter
-    raise KeyError(f"невідоме джерело: {name}")
+    return None
