@@ -207,3 +207,38 @@ def test_telegram_reports_the_offset_it_actually_saw(tmp_path):
     post = result.posts[0]
     assert post.published_at.hour == 8
     assert post.source_timezone == "+03:00"
+
+
+def test_a_failing_file_reaches_the_report_not_only_the_console(tmp_path, monkeypatch):
+    """Файл, який не записався цілком, мусить дійти до контракту.
+
+    Інакше модель бачить уламок даних і не має способу про це дізнатись:
+    posts_total показує те, що вціліло, а rejected_on_import — нуль.
+    """
+    import pulse.importer as importer
+    from pulse.db import count_rejected
+
+    data = tmp_path / "data"
+    data.mkdir()
+    (data / "a_good.csv").write_text(
+        CSV_HEADER + "CRM-GOOD;02.07.2026 12:40;TrafficDesk;текст;100;;автор" + chr(10),
+        encoding="utf-8",
+    )
+    (data / "b_bad.csv").write_text(
+        CSV_HEADER + "CRM-BAD;03.07.2026 12:40;TrafficDesk;текст;100;;автор" + chr(10),
+        encoding="utf-8",
+    )
+
+    real_save = importer.save_posts
+
+    def flaky(session, posts):
+        if posts and posts[0].external_id == "CRM-BAD":
+            raise RuntimeError("x" * 5000)      # довжелезний текст помилки
+        return real_save(session, posts)
+
+    monkeypatch.setattr(importer, "save_posts", flaky)
+
+    with open_session(str(tmp_path / "t.db")) as session:
+        summary = import_path(data, session)
+        assert count_rejected(session) == 1
+        assert len(summary.failed_files[0]) < 500     # текст помилки обрізано

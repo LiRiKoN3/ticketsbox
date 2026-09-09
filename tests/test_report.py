@@ -7,7 +7,7 @@ from pulse.db import open_session
 from pulse.importer import import_path
 from pulse.report import build_report
 
-FIXTURES = Path("fixtures")
+FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
 UNTIL = datetime(2026, 7, 19, 12, 15, tzinfo=timezone.utc)
 
 
@@ -114,3 +114,15 @@ def test_source_gone_from_the_registry_does_not_break_the_report(session, monkey
     telegram = source_block(report, "telegram")
     assert telegram["posts"] == 25
     assert telegram["metric"] is None         # реєстр більше не знає, що це за число
+
+
+def test_legend_explains_what_can_be_misread(session):
+    legend = build_report(session, days=30, until=UNTIL)["legend"]
+    for key in ("channel", "posts_total", "rejected_on_import",
+                "with_metric", "metric_precision"):
+        assert key in legend, f"легенда мовчить про {key}"
+
+
+def test_legend_warns_that_channel_is_source_local(session):
+    legend = build_report(session, days=30, until=UNTIL)["legend"]
+    assert "джерел" in legend["channel"]

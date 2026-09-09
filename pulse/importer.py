@@ -3,7 +3,8 @@
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from pulse.db import forget_rejected, save_posts, save_rejected
+from pulse.db import (REASON_LIMIT, forget_rejected, save_failed_file,
+                      save_posts, save_rejected)
 from pulse.sources.registry import adapter_for
 
 
@@ -54,7 +55,14 @@ def import_path(root: Path, session) -> ImportSummary:
             # Адаптери самі відкидають нечитабельні рядки; сюди долітає лише
             # те, чого ми не передбачили, — і воно не має валити решту файлів.
             session.rollback()
-            summary.failed_files.append(f"{path}: {type(error).__name__}: {error}")
+            # Текст помилки від драйвера буває на сотні кілобайт (весь SQL із
+            # параметрами). Беремо перший рядок і обрізаємо: у консоль і в базу
+            # має йти зрозуміла фраза, а не дамп запиту.
+            first_line = str(error).split(chr(10))[0]
+            reason = f"{type(error).__name__}: {first_line}"[:REASON_LIMIT]
+            summary.failed_files.append(f"{path}: {reason}")
+            save_failed_file(session, path, reason)
+            session.commit()
             continue
 
         summary.imported += len(result.posts)

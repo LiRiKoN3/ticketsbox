@@ -56,3 +56,11 @@ def test_flag_is_not_decided_by_the_rounded_ratio():
     assert above_median(ratio_to_median(4543, 4543.5)) is False
     assert above_median(ratio_to_median(14101, 14100)) is True
     assert above_median(ratio_to_median(14100, 14100)) is False
+
+
+def test_ratio_is_none_when_the_median_makes_no_sense():
+    """Від'ємна медіана давала перевернуту відповідь: найгірший пост
+    отримував above_median=True, а нуль давав vs_median=-0.0."""
+    assert ratio_to_median(0, -250.0) is None
+    assert ratio_to_median(-500, -250.0) is None
+    assert above_median(ratio_to_median(-500, -250.0)) is None
