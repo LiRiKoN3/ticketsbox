@@ -7,7 +7,7 @@ from pulse.__main__ import resolve_days, resolve_until
 from pulse.db import open_session
 from pulse.importer import import_path
 
-FIXTURES = Path("fixtures")
+FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
 
 
 @pytest.fixture

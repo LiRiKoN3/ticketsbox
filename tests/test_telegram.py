@@ -3,7 +3,7 @@ from pathlib import Path
 
 from pulse.sources.telegram import TelegramAdapter, parse_views
 
-FIXTURES = Path("fixtures/telegram")
+FIXTURES = Path(__file__).resolve().parent.parent / "fixtures" / "telegram"
 
 
 def parse(name):

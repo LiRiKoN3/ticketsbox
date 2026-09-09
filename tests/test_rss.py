@@ -3,7 +3,7 @@ from pathlib import Path
 
 from pulse.sources.rss import RssAdapter, strip_html
 
-FIXTURES = Path("fixtures/rss")
+FIXTURES = Path(__file__).resolve().parent.parent / "fixtures" / "rss"
 
 
 def parse(name):

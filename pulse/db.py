@@ -149,19 +149,10 @@ def forget_rejected(session: Session, source_file) -> int:
     return result.rowcount or 0
 
 
-def save_rejected(session: Session, rejected) -> int:
-    if not rejected:
-        return 0
+REASON_LIMIT = 300                # стільки вміщує колонка reason
 
-    rows = [
-        {
-            "source_file": normalized_path(r.source_file),
-            "line_number": r.line_number,
-            "reason": r.reason,
-            "raw": r.raw,
-        }
-        for r in rejected
-    ]
+
+def _upsert_rejected(session: Session, rows: list[dict]) -> int:
     statement = sqlite_insert(RejectedRow).values(rows)
     statement = statement.on_conflict_do_update(
         index_elements=["source_file", "line_number"],
@@ -170,6 +161,35 @@ def save_rejected(session: Session, rejected) -> int:
     session.execute(statement)
     session.flush()
     return len(rows)
+
+
+def save_rejected(session: Session, rejected) -> int:
+    if not rejected:
+        return 0
+
+    return _upsert_rejected(session, [
+        {
+            "source_file": normalized_path(r.source_file),
+            "line_number": r.line_number,
+            "reason": r.reason[:REASON_LIMIT],
+            "raw": r.raw,
+        }
+        for r in rejected
+    ])
+
+
+def save_failed_file(session: Session, source_file, reason: str) -> int:
+    """Файл, який не вдалося опрацювати цілком.
+
+    Лягає в ту саму таблицю з line_number = 0, щоб неповнота зрізу дійшла до
+    звіту, а не лишилась однією фразою в консолі: модель консолі не бачить.
+    """
+    return _upsert_rejected(session, [{
+        "source_file": normalized_path(source_file),
+        "line_number": 0,
+        "reason": reason[:REASON_LIMIT],
+        "raw": "",
+    }])
 
 
 def all_posts(session: Session) -> list[Post]:

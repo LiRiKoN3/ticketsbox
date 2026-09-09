@@ -6,7 +6,7 @@ from sqlalchemy import select
 from pulse.db import RejectedRow, all_posts, count_rejected, open_session
 from pulse.importer import import_path
 
-FIXTURES = Path("fixtures")
+FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
 
 
 @pytest.fixture

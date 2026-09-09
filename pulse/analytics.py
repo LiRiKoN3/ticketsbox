@@ -27,7 +27,9 @@ def ratio_to_median(value: int | None, median_value: float | None) -> float | No
     контракт: якщо округлити тут, прапорець above_median почне рахуватися
     з округленого числа і в околі медіани відповідатиме неправильно.
     """
-    if value is None or not median_value:
+    # median_value <= 0 буває, коли джерело віддало від'ємні числа: відношення
+    # до такої медіани перевертає відповідь, тож чесніше сказати "не рахується".
+    if value is None or median_value is None or median_value <= 0:
         return None
     return value / median_value
 

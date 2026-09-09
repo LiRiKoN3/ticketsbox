@@ -3,7 +3,7 @@ from pathlib import Path
 
 from pulse.sources.crm_csv import CrmCsvAdapter, parse_kyiv_datetime, parse_number
 
-FIXTURE = Path("fixtures/export.csv")
+FIXTURE = Path(__file__).resolve().parent.parent / "fixtures" / "export.csv"
 NEWLINE = chr(10)
 
 
