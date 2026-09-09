@@ -20,6 +20,11 @@ def test_parse_views_handles_thousands():
     assert parse_views("808") == 808
 
 
+def test_parse_views_strips_nbsp_like_the_csv_adapter_does():
+    # у CRM-адаптері це вже вміє parse_number; асиметрія між ними — випадкова
+    assert parse_views("12 345") == 12345
+
+
 def test_reads_every_post_in_the_channel():
     assert len(parse("trafficdesk").posts) == 14
     assert len(parse("cpa_insider").posts) == 11

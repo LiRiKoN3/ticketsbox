@@ -1,5 +1,6 @@
 """Адаптер сторінок t.me/s/<channel>."""
 
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -10,9 +11,13 @@ from pulse.sources.base import (WHOLE_FILE, ParseResult, Rejected, Unreadable,
                                 format_offset, reason_of)
 
 
+# \s ловить і нерозривний пробіл — так само, як у CRM-адаптері
+SPACES = re.compile(r"\s")
+
+
 def parse_views(raw: str) -> int | None:
     """"21.7K" -> 21700. Telegram округлює — точного числа не існує."""
-    value = raw.strip().upper().replace(" ", "")
+    value = SPACES.sub("", raw or "").upper()
     if not value:
         return None
     # Нерозбірне значення дає None, а не виняток: перегляди не входять до
@@ -33,7 +38,7 @@ class TelegramAdapter:
     metric_precision = "rounded"   # 21.7K — це 21650...21749
 
     def can_handle(self, path: Path) -> bool:
-        return path.suffix == ".html"
+        return path.suffix.lower() == ".html"
 
     def parse(self, path: Path) -> ParseResult:
         result = ParseResult()

@@ -11,6 +11,7 @@ from pulse.sources.base import WHOLE_FILE, ParseResult, Rejected, reason_of
 
 KYIV = ZoneInfo("Europe/Kyiv")
 COLUMNS = 7                       # post_id;Дата;Площадка;Текст;reach;Ссылка;Автор
+HEADER_FIRST_CELL = "post_id"     # за ним упізнаємо рядок заголовка
 DATE_FORMATS = ("%d.%m.%Y %H:%M", "%Y-%m-%d %H:%M")
 SPACES = re.compile(r"\s")   # \s у Python ловить і нерозривний пробіл
 # Кома як роздільник тисяч — лише коли вона групує рівно по три цифри.
@@ -53,7 +54,7 @@ class CrmCsvAdapter:
     metric_precision = "exact"
 
     def can_handle(self, path: Path) -> bool:
-        return path.suffix == ".csv"
+        return path.suffix.lower() == ".csv"
 
     def parse(self, path: Path) -> ParseResult:
         result = ParseResult()
@@ -69,8 +70,10 @@ class CrmCsvAdapter:
         with path.open(encoding="utf-8-sig", newline="") as handle:
             reader = csv.reader(handle, delimiter=";")
             for number, row in enumerate(reader, start=1):
-                if number == 1:
+                if number == 1 and row and row[0].strip().lower() == HEADER_FIRST_CELL:
                     continue                       # заголовок
+                # Без цієї перевірки перший рядок пропускався беззастережно,
+                # і вивантаження без заголовка втрачало справжній запис.
                 if not any(cell.strip() for cell in row):
                     result.rejected.append(
                         Rejected(str(path), number, "порожній рядок", ";".join(row))
